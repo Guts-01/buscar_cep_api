@@ -31,7 +31,7 @@ def consultar_cep():
             return jsonify({'erro': 'CEP inválido ou não encontrado!'}), 404
 
         if not endereco['complemento']:
-            endereco['complemento'] = 'Não encontrado ou não existe'
+            endereco['complemento'] = 'Não consta'
         if not endereco['unidade']:
             endereco['unidade'] = 'Não encontrada'
 
