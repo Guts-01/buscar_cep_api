@@ -24,8 +24,6 @@ function consultarCep() {
                 return;
             }
             if (cep.length < 8 && !isNaN(cepFomatted)) {
-                console.log(typeof cep);
-                console.log(typeof cepFomatted);
                 document.getElementById('resultado').style.display = 'block';
                 document.getElementById('resultado').style.color = 'red';
                 document.getElementById('resultado').innerText = '*Digite um CEP válido com 8 dígitos';
@@ -33,16 +31,12 @@ function consultarCep() {
                 return;
             }
             if (cep.length < 8 || cep.length > 8 || cep.length === 8 && !isNaN(cepFomatted)) {
-                console.log(typeof cep);
-                console.log(typeof cepFomatted);
                 document.getElementById('resultado').style.display = 'block';
                 document.getElementById('resultado').style.color = 'red';
                 document.getElementById('resultado').innerText = '*Digite apenas números';
                 document.getElementById('resultado').style.textAlign = 'center';
                 return;
             }
-            console.log(typeof cep);
-            console.log(typeof cepFomatted);
             console.log("Erro");
             return;
                 }
