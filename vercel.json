@@ -1,0 +1,8 @@
+{
+  "builds": [
+    { "src": "buscar_cep_api.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "buscar_cep_api.py" }
+  ]
+}
