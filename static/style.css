@@ -1,0 +1,128 @@
+/* static/style.css */
+
+body {
+    background-color: #ffffff; /* Azul claro */
+    color: #000000; /* Azul escuro para o texto */
+    font-family: Arial, sans-serif; /* Fonte padrão */
+    margin: 0;
+    display: flex; /* Usar flexbox para centralização */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    height: 100vh; /* Altura total da viewport */
+}
+
+main {
+    background-color: white; /* Fundo branco para o conteúdo */
+    padding: 20px; /* Espaçamento interno */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 2px 4px 8px 4px rgba(0, 0, 0, 0.2); /* Sombra suave */
+    width: 100%; /* Largura total */
+    max-width: 700px; /* Largura máxima para desktops */
+    box-sizing: border-box; /* Inclui padding e borda no cálculo da largura */
+}
+
+h1,h2,p {
+    color: #000000; /* Azul escuro para o título */
+    text-align: center; /* Centraliza o texto do título */
+}
+
+.busca_de_cep {
+    margin: 40px 0; /* Margem acima e abaixo do bloco de busca */
+    display: flex; /* Usar flexbox para alinhar o input e o botão */
+    flex-direction: column; /* Empilha os elementos verticalmente */
+    align-items: center; /* Centraliza os itens */
+}
+
+input {
+    padding: 10px; /* Espaçamento interno */
+    font-size: 16px; /* Tamanho da fonte */
+    width: 100%; /* Largura do campo de entrada */
+    max-width: 300px; /* Largura máxima do campo de entrada */
+    border: 1px solid #0d47a1; /* Borda azul escuro */
+    border-radius: 5px; /* Bordas arredondadas */
+    margin-bottom: 40px; /* Margem abaixo do input */
+}
+.botoes{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.btn_consultar{
+    padding: 10px 20px; /* Espaçamento interno do botão */
+    font-size: 16px; /* Tamanho da fonte do botão */
+    background-color: #000000; /* Fundo azul escuro */
+    color: white; /* Texto branco */
+    border: none; /* Sem borda */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer; /* Muda o cursor para pointer ao passar o mouse */
+    transition: 0.5s;
+}
+.btn_limpar{
+    padding: 10px 20px; /* Espaçamento interno do botão */
+    font-size: 16px; /* Tamanho da fonte do botão */
+    background-color: #cc0000; /* Fundo azul escuro */
+    color: white; /* Texto branco */
+    border: none; /* Sem borda */
+    border-radius: 5px; /* Bordas arredondadas */
+    cursor: pointer; /* Muda o cursor para pointer ao passar o mouse */
+    transition: 0.5s;
+    display: none;
+}
+
+.btn_limpar:hover {
+    background-color: #fda8a8; 
+}
+
+.btn_consultar:hover {
+    background-color: #444444; 
+}
+
+.result {
+    margin-top: 20px; /* Margem acima da seção de resultado */
+}
+
+pre {
+    background-color: #ffffff; /* Fundo azul claro para a área de resultado */
+    padding: 10px; /* Espaçamento interno */
+    border: 1px solid #000000; /* Borda azul escuro */
+    margin: auto;
+    width: 60%;
+    border-radius: 5px; /* Bordas arredondadas */
+    overflow-x: auto; /* Permite rolagem horizontal se necessário */
+    display: none;
+}
+
+/* Consultas de mídia para responsividade */
+@media (max-width: 768px) {
+    main{
+        width: 90%; /* Largura total para telas menores */
+    }
+    input {
+        max-width: 90%; /* Permite que o campo de entrada ocupe 100% em telas menores */
+    }
+
+    .busca_de_cep {
+        flex-direction: column; /* Empilha o input e o botão verticalmente */
+    }
+    pre {
+        width: 90%;
+    }
+    .botoes{
+        flex-direction: column;
+        width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 24px; /* Reduz o tamanho da fonte do título em telas pequenas */
+    }
+
+    input, button {
+        font-size: 14px; /* Reduz o tamanho da fonte dos botões e inputs em telas pequenas */
+        padding: 8px; /* Reduz o espaçamento interno em telas pequenas */
+    }
+}

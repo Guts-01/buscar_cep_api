@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de CEP</title>
+    <!-- Referência ao CSS na pasta static -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main>
+        <h1>Consulta de CEP</h1>
+        <p>Consulte um endereço pelo cep e veja informações sobre.</p>
+        <p>Digite somente numeros, sem letras ou caracteres especiais como "-" e "."</p>
+        <div class="busca_de_cep">
+
+            <input type="text" id="cepInput" placeholder="Digite o CEP">
+
+            <div class="botoes">
+                <button onclick="consultarCep()" class="btn_consultar">Consultar</button>
+                <button class="btn_limpar" id="btn_limpar" onclick="limparResultado()">Limpar</button>
+
+            </div>
+
+        </div>
+
+        <div class="result">
+
+            <h2>Consulta</h2>
+            <pre id="resultado"></pre>
+        </div>
+    </main>
+
+    <!-- Referência ao JS na pasta static -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
