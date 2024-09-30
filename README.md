@@ -6,7 +6,7 @@ Um projeto desenvolvido por mim que utiliza Flask como backend para fazer requis
 
 - **Backend:** Flask (Python)
 - **Frontend:** HTML, JavaScript
-- **API Externa:** [API de Busca de CEP] (insira aqui a URL da API que está utilizando)
+- **API Externa:** [API de Busca de CEP]
 
 ## 🛠️ Funcionalidades
 
