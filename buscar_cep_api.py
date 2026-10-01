@@ -1,61 +1,58 @@
-import os
-from threading import Timer
-from flask import Flask, jsonify, request, render_template
+"""Aplicação web para consultar endereços pelo CEP."""
+
+import re
+
 import requests
-import webbrowser
+from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
-# Rota principal para servir o arquivo HTML
-@app.route('/')
+VIACEP_URL = "https://viacep.com.br/ws/{cep}/json/"
+ADDRESS_FIELDS = (
+    "cep",
+    "logradouro",
+    "complemento",
+    "unidade",
+    "bairro",
+    "localidade",
+    "uf",
+    "estado",
+    "regiao",
+    "ibge",
+    "ddd",
+)
+
+
+@app.get("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
-# Rota que processa a requisição AJAX e retorna os dados do CEP
-@app.route('/consultar_cep', methods=['POST'])
+
+@app.post("/consultar_cep")
 def consultar_cep():
-    data = request.json
-    enderecoCep = data.get('cep')
+    payload = request.get_json(silent=True)
+    cep = payload.get("cep") if isinstance(payload, dict) else None
 
-    if not enderecoCep:
-        return jsonify({'erro': 'CEP não informado!'}), 400
+    if not isinstance(cep, str) or not re.fullmatch(r"[0-9]{5}-?[0-9]{3}", cep.strip()):
+        return jsonify(erro="Informe um CEP válido com 8 dígitos."), 400
 
-    url = f'https://viacep.com.br/ws/{enderecoCep}/json/'
-    response = requests.get(url)
+    cep = cep.strip().replace("-", "")
 
     try:
+        response = requests.get(VIACEP_URL.format(cep=cep), timeout=5)
         response.raise_for_status()
-        endereco = response.json()
+        address = response.json()
+    except (requests.RequestException, ValueError):
+        return jsonify(erro="Não foi possível consultar o CEP agora. Tente novamente."), 502
 
-        if endereco.get('erro'):
-            return jsonify({'erro': 'CEP inválido ou não encontrado!'}), 404
+    if not isinstance(address, dict):
+        return jsonify(erro="A consulta retornou uma resposta inválida."), 502
 
-        if not endereco['complemento']:
-            endereco['complemento'] = 'Não consta'
-        if not endereco['unidade']:
-            endereco['unidade'] = 'Não encontrada'
+    if address.get("erro"):
+        return jsonify(erro="CEP não encontrado. Confira os números e tente novamente."), 404
 
-        return jsonify({
-            'cep': endereco['cep'],
-            'logradouro': endereco['logradouro'],
-            'complemento': endereco['complemento'],
-            'unidade': endereco['unidade'],
-            'bairro': endereco['bairro'],
-            'localidade': endereco['localidade'],
-            'uf': endereco['uf'],
-            'estado': endereco['estado'],
-            'regiao': endereco['regiao'],
-            'ibge': endereco['ibge'],
-            'ddd': endereco['ddd']
-        })
+    return jsonify({field: address.get(field) or "" for field in ADDRESS_FIELDS})
 
-    except requests.exceptions.HTTPError as erro:
-        return jsonify({'erro': f'Erro na requisição da API: {erro}'}), 500
 
-# def open_browser():
-#     if not os.environ.get("FLASK_DEBUG"):  
-#         webbrowser.open_new("http://127.0.0.1:5000")
-
-if __name__ == '__main__':
-    # Timer(1, open_browser).start()
-    app.run(debug=False)
+if __name__ == "__main__":
+    app.run()

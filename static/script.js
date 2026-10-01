@@ -1,92 +1,129 @@
-function consultarCep() {
-    const btn_limpar = document.getElementById('btn_limpar');
-    btn_limpar.style.display = 'block';
-    const cep = document.getElementById('cepInput').value.trim();
-    
-    
+const form = document.querySelector('#cep-form');
+const cepInput = document.querySelector('#cep-input');
+const submitButton = document.querySelector('#submit-button');
+const clearButton = document.querySelector('#clear-button');
+const statusMessage = document.querySelector('#status');
+const result = document.querySelector('#result');
+const addressDetails = document.querySelector('#address-details');
 
-    if (cep === "") {
-        document.getElementById('resultado').style.display = 'block';
-        document.getElementById('resultado').style.color = 'red';
-        document.getElementById('resultado').innerText = '*Digite um CEP';
-        document.getElementById('resultado').style.textAlign = 'center';
-        return;
-    }
-    else if (cep.length !== 8) {
-            const cepFomatted = parseInt(cep);
-            if (cep.length > 8) {
-                console.log(typeof cep);
-                console.log(typeof cepFomatted);
-                document.getElementById('resultado').style.display = 'block';
-                document.getElementById('resultado').style.color = 'red';
-                document.getElementById('resultado').innerText = '*Apenas 8 dígitos são permitidos';
-                document.getElementById('resultado').style.textAlign = 'center';
-                return;
-            }
-            if (cep.length < 8 && !isNaN(cepFomatted)) {
-                document.getElementById('resultado').style.display = 'block';
-                document.getElementById('resultado').style.color = 'red';
-                document.getElementById('resultado').innerText = '*Digite um CEP válido com 8 dígitos';
-                document.getElementById('resultado').style.textAlign = 'center';
-                return;
-            }
-            if (cep.length < 8 || cep.length > 8 || cep.length === 8 && !isNaN(cepFomatted)) {
-                document.getElementById('resultado').style.display = 'block';
-                document.getElementById('resultado').style.color = 'red';
-                document.getElementById('resultado').innerText = '*Digite apenas números';
-                document.getElementById('resultado').style.textAlign = 'center';
-                return;
-            }
-            console.log("Erro");
-            return;
-                }
-        
-    fetch('/consultar_cep', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cep: cep }),  // Envia o CEP em formato JSON
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Se houver erro, exibe a mensagem de erro
-        if (data.erro) {
-            document.getElementById('resultado').innerText = data.erro;
-            document.getElementById('resultado').style.display = 'block';
-            document.getElementById('resultado').style.color = 'red';
-            document.getElementById('resultado').innerText = '*CEP inválido ou não encontrado';
-            document.getElementById('resultado').style.textAlign = 'center';
-        } else {
-            // Formata os dados para exibição
-            let resultado = `CEP: ${data.cep}\n`;
-            resultado += `Endereço: ${data.logradouro}\n`;
-            resultado += `Complemento: ${data.complemento}\n`;
-            resultado += `Unidade: ${data.unidade}\n`;
-            resultado += `Bairro: ${data.bairro}\n`;
-            resultado += `Cidade: ${data.localidade}\n`;
-            resultado += `UF: ${data.uf}\n`;
-            resultado += `Estado: ${data.estado}\n`;
-            resultado += `Região: ${data.regiao}\n`;
-            resultado += `IBGE: ${data.ibge}\n`;
-            resultado += `DDD: (${data.ddd})`;
+const fields = [
+  ['cep', 'CEP'],
+  ['logradouro', 'Logradouro'],
+  ['bairro', 'Bairro'],
+  ['localidade', 'Cidade'],
+  ['uf', 'UF'],
+  ['estado', 'Estado'],
+  ['regiao', 'Região'],
+  ['complemento', 'Complemento'],
+  ['unidade', 'Unidade'],
+  ['ibge', 'Código IBGE'],
+  ['ddd', 'DDD'],
+];
 
-            // Exibe os dados do endereço no frontend
-            document.getElementById('resultado').style.color = 'black';
-            document.getElementById('resultado').style.gap = '20px';
-            document.getElementById('resultado').style.display = 'block';
-            document.getElementById('resultado').innerText = resultado;
-            document.getElementById('resultado').style.textAlign = 'left';
-        }
-    })
-    .catch((error) => {
-        document.getElementById('resultado').innerText = 'Erro na consulta';
-        console.error('Erro:', error);
+let currentRequest;
+
+function showStatus(message, type = 'error') {
+  statusMessage.textContent = message;
+  statusMessage.dataset.type = type;
+  statusMessage.hidden = false;
+}
+
+function clearStatus() {
+  statusMessage.textContent = '';
+  statusMessage.hidden = true;
+}
+
+function hideResult() {
+  result.hidden = true;
+  addressDetails.replaceChildren();
+}
+
+function renderAddress(address) {
+  const details = document.createDocumentFragment();
+
+  fields.forEach(([key, label]) => {
+    const item = document.createElement('div');
+    item.className = 'detail';
+
+    const term = document.createElement('dt');
+    term.textContent = label;
+
+    const description = document.createElement('dd');
+    description.textContent = address[key] || 'Não informado';
+
+    item.append(term, description);
+    details.append(item);
+  });
+
+  addressDetails.replaceChildren(details);
+  result.hidden = false;
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  currentRequest?.abort();
+  hideResult();
+  clearStatus();
+
+  const cep = cepInput.value.trim();
+  if (!/^\d{5}-?\d{3}$/.test(cep)) {
+    cepInput.setAttribute('aria-invalid', 'true');
+    showStatus('Informe um CEP válido com 8 números.');
+    cepInput.focus();
+    return;
+  }
+
+  cepInput.removeAttribute('aria-invalid');
+  const requestController = new AbortController();
+  currentRequest = requestController;
+  submitButton.disabled = true;
+  submitButton.textContent = 'Buscando...';
+  showStatus('Consultando CEP...', 'loading');
+
+  try {
+    const response = await fetch('/consultar_cep', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cep }),
+      signal: requestController.signal,
     });
-}
+    const data = await response.json();
 
-function limparResultado() {
-    document.getElementById('resultado').style.display = 'none';
-    document.getElementById('cepInput').value = '';
-    document.getElementById('btn_limpar').style.display = 'none';
-}
+    if (!response.ok) {
+      throw new Error(data.erro || 'Não foi possível consultar o CEP.');
+    }
+
+    clearStatus();
+    renderAddress(data);
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      const message = error instanceof SyntaxError
+        ? 'Resposta inválida. Tente novamente.'
+        : error instanceof TypeError
+          ? 'Falha de conexão. Tente novamente.'
+          : error.message || 'Não foi possível consultar o CEP.';
+      showStatus(message);
+    }
+  } finally {
+    if (currentRequest === requestController) {
+      currentRequest = undefined;
+      submitButton.disabled = false;
+      submitButton.textContent = 'Buscar endereço';
+    }
+  }
+});
+
+cepInput.addEventListener('input', () => {
+  currentRequest?.abort();
+  cepInput.removeAttribute('aria-invalid');
+  clearStatus();
+  hideResult();
+});
+
+clearButton.addEventListener('click', () => {
+  currentRequest?.abort();
+  clearStatus();
+  hideResult();
+  form.reset();
+  cepInput.focus();
+});

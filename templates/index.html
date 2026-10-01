@@ -1,36 +1,65 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7fb">
+    <meta name="description" content="Consulte um CEP e encontre os dados do endereço.">
     <title>Consulta de CEP</title>
-    <!-- Referência ao CSS na pasta static -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <main>
-        <h1>Consulta de CEP</h1>
-        <p>Consulte um endereço pelo cep e veja informações sobre.</p>
-        <p>Digite somente numeros, sem letras ou caracteres especiais como "-" e "."</p>
-        <div class="busca_de_cep">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="intro">
+        <span class="eyebrow">BUSCA DE ENDEREÇO</span>
+        <h1>Encontre um endereço pelo CEP</h1>
+        <p>Digite o CEP para consultar rua, bairro, cidade e outras informações em segundos.</p>
+      </header>
 
-            <input type="text" id="cepInput" placeholder="Digite o CEP">
-
-            <div class="botoes">
-                <button onclick="consultarCep()" class="btn_consultar">Consultar</button>
-                <button class="btn_limpar" id="btn_limpar" onclick="limparResultado()">Limpar</button>
-
-            </div>
-
+      <section class="card search-card" aria-labelledby="search-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="search-title">Consultar CEP</h2>
+            <p>Use os 8 números do CEP, com ou sem hífen.</p>
+          </div>
+          <span class="step" aria-hidden="true">01</span>
         </div>
 
-        <div class="result">
+        <form id="cep-form" novalidate>
+          <label for="cep-input">CEP</label>
+          <div class="form-row">
+            <input
+              id="cep-input"
+              name="cep"
+              type="text"
+              inputmode="numeric"
+              autocomplete="postal-code"
+              placeholder="Ex.: 01001-000"
+              maxlength="9"
+              aria-describedby="cep-help status"
+              required
+            >
+            <button id="submit-button" type="submit">Buscar endereço</button>
+          </div>
+          <p class="field-help" id="cep-help">Aceitamos 01001000 ou 01001-000.</p>
+        </form>
 
-            <pre id="resultado"></pre>
+        <p id="status" class="status" role="status" aria-live="polite" hidden></p>
+      </section>
+
+      <section id="result" class="card result-card" aria-labelledby="result-title" hidden>
+        <div class="section-heading result-heading">
+          <div>
+            <span class="result-label">ENDEREÇO ENCONTRADO</span>
+            <h2 id="result-title">Resultado da consulta</h2>
+          </div>
+          <button id="clear-button" class="text-button-clear" type="button">Limpar busca</button>
         </div>
+        <dl id="address-details" class="details"></dl>
+      </section>
+
+      <footer class="footer">&copy; 2024 Guto oliveira. Todos os direitos reservados.</footer>
     </main>
-
-    <!-- Referência ao JS na pasta static -->
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
+  </body>
 </html>

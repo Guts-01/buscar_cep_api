@@ -1,22 +1,15 @@
-# 📦 Consultar CEP
+# Consulta de CEP
 
-Um projeto desenvolvido por mim que utiliza Flask como backend para fazer requisições a uma API de busca de CEP com Python, e um frontend em JavaScript que exibe os resultados em uma página HTML.
+Aplicação Flask para consultar endereços pela [API ViaCEP](https://viacep.com.br/). A página aceita CEPs com ou sem hífen e mostra os dados do endereço em uma interface responsiva.
 
-## 🚀 Tecnologias Utilizadas
+## Executar localmente
 
-- **Backend:** Flask (Python)
-- **Frontend:** HTML, JavaScript
-- **API Externa:** [API de Busca de CEP]
+1. Instale as dependências: `pip install -r requirements.txt`
+2. Inicie a aplicação: `python buscar_cep_api.py`
+3. Acesse `http://127.0.0.1:5000` no navegador.
 
-## 🛠️ Funcionalidades
+## API
 
-- Busca de informações de endereços a partir de um CEP informado pelo usuário.
-- Exibição das informações de endereço em uma página web simples e intuitiva.
+Envie um `POST` para `/consultar_cep` com JSON no formato `{"cep": "01001-000"}`. A resposta contém os campos do endereço fornecidos pelo ViaCEP. Campos ausentes são retornados como strings vazias.
 
-## 🌐 Como Funciona
-
-1. O usuário insere um CEP na interface web.
-2. O backend (Flask) faz uma requisição à API de busca de CEP utilizando Python.
-3. O resultado da requisição (endereço, cidade, estado, etc.) é retornado ao frontend.
-4. As informações são exibidas em tempo real na página HTML, utilizando JavaScript para manipulação dos dados.
-
+A API retorna erro `400` para CEP inválido, `404` para CEP não encontrado e `502` quando a consulta ao ViaCEP falha. Em todos os casos de erro, a resposta JSON contém a chave `erro`.
